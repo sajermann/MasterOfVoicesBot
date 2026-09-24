@@ -1,4 +1,5 @@
 import { REST, Routes } from 'discord.js';
+import { healthCommand } from './health';
 
 const TOKEN_DISCORD = process.env.TOKEN_DISCORD || '';
 const CLIENT_ID_DISCORD = process.env.CLIENT_ID_DISCORD || '';
@@ -10,18 +11,10 @@ export interface CommandEntry {
 }
 
 export const commands: CommandEntry[] = [
-  // {
-  //   command: dumpCommand,
-  //   skip: false,
-  // },
-  // {
-  //   command: healthCommand,
-  //   skip: false,
-  // },
-  // {
-  //   command: linkMeCommand,
-  //   skip: true,
-  // },
+  {
+    command: healthCommand,
+    skip: false,
+  },
 ];
 
 const activeCommands = commands
