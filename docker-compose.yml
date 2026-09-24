@@ -1,0 +1,8 @@
+services:
+  master-of-voices-discord-bot:
+    build:
+      context: .
+      target: production
+    restart: always
+    environment:
+      - NODE_ENV=production
