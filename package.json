@@ -1,6 +1,6 @@
 {
   "name": "master-of-voices-discord-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bot do Discord responsável por gerenciar os canais de audio.",
   "author": "Bruno Sajermann",
   "main": "./src/index.js",
@@ -35,5 +35,5 @@
     "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3"
   },
-  "lastUpdate": "2026-09-24T18:59:05Z"
+  "lastUpdate": "2026-09-24T23:49:49Z"
 }
