@@ -1,30 +1,28 @@
-// export async function handleButtonInteraction(
-//   interaction: ButtonInteraction,
-// ): Promise<void> {
-//   const { customId } = interaction;
+import type { ButtonInteraction } from 'discord.js';
+import { handleConfirmCreateRoom } from './confirmCreateRoom';
+import { handleOpenRoom } from './openRoom';
+import { handleSetNameButton } from './setName';
 
-//   if (customId === 'btn_my_stats') {
-//     await handleMyStatsButton(interaction);
-//     return;
-//   }
+/**
+ * Despacha as interações de botão para seus respectivos manipuladores.
+ */
+export async function handleButtonInteraction(
+  interaction: ButtonInteraction,
+): Promise<void> {
+  const { customId } = interaction;
 
-//   if (customId === 'btn_link_me') {
-//     await handleLinkMeButton(interaction);
-//     return;
-//   }
+  if (customId === 'btn_open_room') {
+    await handleOpenRoom(interaction);
+    return;
+  }
 
-//   if (customId === 'btn_unlink_me') {
-//     await handleUnlinkMeButton(interaction);
-//     return;
-//   }
+  if (customId === 'btn_set_room_name') {
+    await handleSetNameButton(interaction);
+    return;
+  }
 
-//   if (customId === 'btn_confirm_unlink') {
-//     await handleConfirmUnlinkButton(interaction);
-//     return;
-//   }
-
-//   if (customId === 'btn_cancel_unlink') {
-//     await handleCancelUnlinkButton(interaction);
-//     return;
-//   }
-// }
+  if (customId === 'btn_confirm_create_room') {
+    await handleConfirmCreateRoom(interaction);
+    return;
+  }
+}

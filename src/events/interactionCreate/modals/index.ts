@@ -1,13 +1,16 @@
-// import type { ModalSubmitInteraction } from 'discord.js';
-// import { handleLinkMeModal } from './linkMeModal';
+import type { ModalSubmitInteraction } from 'discord.js';
+import { handleRoomNameModal } from './roomNameModal';
 
-// export async function handleModalInteraction(
-//   interaction: ModalSubmitInteraction,
-// ): Promise<void> {
-//   const { customId } = interaction;
+/**
+ * Despacha as interações de submissão de modal.
+ */
+export async function handleModalInteraction(
+  interaction: ModalSubmitInteraction,
+): Promise<void> {
+  const { customId } = interaction;
 
-//   if (customId === 'modal_link_me') {
-//     await handleLinkMeModal(interaction);
-//     return;
-//   }
-// }
+  if (customId === 'modal_room_name') {
+    await handleRoomNameModal(interaction);
+    return;
+  }
+}

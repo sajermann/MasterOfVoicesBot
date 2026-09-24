@@ -6,99 +6,93 @@ import {
   EmbedBuilder,
   type Message,
 } from 'discord.js';
-import { formatDateAndHour } from './formatDate';
-
-const CHANNEL_BOT_ID = process.env.CHANNEL_BOT_ID || '';
 
 export async function setupPanel(client: Client): Promise<void> {
+  const channelId = process.env.CHANNEL_BOT_ID || '';
+
+  if (!channelId) {
+    console.warn(
+      '[SetupPanel] CHANNEL_BOT_ID não configurado. Painel fixo ignorado.',
+    );
+    return;
+  }
+
   console.log(
-    `[SetupPanel] Initializing persistent panel in channel: ${CHANNEL_BOT_ID}...`,
+    `[SetupPanel] Inicializando painel fixo de salas de voz no canal: ${channelId}...`,
   );
+
   try {
-    const channel = await client.channels.fetch(CHANNEL_BOT_ID);
-    if (!channel?.isTextBased() || !('bulkDelete' in channel)) {
+    const channel = await client.channels.fetch(channelId);
+    if (!channel?.isTextBased() || !('send' in channel)) {
       console.error(
-        `[SetupPanel] Finished with error - channel ${CHANNEL_BOT_ID} not found, not text-based, or does not support bulk delete.`,
+        `[SetupPanel] Canal ${channelId} não encontrado, não é de texto ou não permite envio de mensagens.`,
       );
       return;
     }
 
-    // 1. Fetch the latest messages from the channel
-    const messages = await channel.messages.fetch({ limit: 50 });
-    console.log(
-      `[SetupPanel] Fetched ${messages.size} message(s) from channel ${CHANNEL_BOT_ID}`,
-    );
-
-    const currentDate = formatDateAndHour(new Date());
-
-    // Build the panel layout (Embed + Button)
+    // 1. Constrói o Embed e o Botão do Painel
     const embed = new EmbedBuilder()
-      .setTitle('Fort Bot - Telemetria')
+      .setTitle('🎙️ Salas de Voz Privadas')
       .setDescription(
-        `Bem-vindo!\n\nEscolha uma opção abaixo\n\n*Bot Restarted: ${currentDate}*`,
+        'Crie sua própria sala de voz temporária e totalmente privada com apenas um clique!\n\n' +
+          '**Como funciona:**\n' +
+          '1️⃣ Clique no botão **Criar Sala Privada** abaixo.\n' +
+          '2️⃣ Escolha o limite máximo de pessoas que poderão entrar.\n' +
+          '3️⃣ Selecione no menu nativo quais amigos terão permissão de acesso.\n' +
+          '4️⃣ Ao confirmar, sua sala é criada e você é movido automaticamente.\n\n' +
+          '🧹 *Quando o último participante sair da sala, ela será excluída automaticamente.*',
       )
-      .setColor(0x5865f2);
+      .setColor(0x5865f2)
+      .setFooter({
+        text: 'Master of Voices • Salas Temporárias',
+      });
 
-    const myStatsButton = new ButtonBuilder()
-      .setCustomId('btn_my_stats')
-      .setLabel('My Stats')
-      .setStyle(ButtonStyle.Success)
-      .setEmoji('📊');
-
-    const linkButton = new ButtonBuilder()
-      .setCustomId('btn_link_me')
-      .setLabel('Link Me')
+    const openRoomButton = new ButtonBuilder()
+      .setCustomId('btn_open_room')
+      .setLabel('Criar Sala Privada')
       .setStyle(ButtonStyle.Primary)
-      .setEmoji('🔗');
-
-    const unlinkButton = new ButtonBuilder()
-      .setCustomId('btn_unlink_me')
-      .setLabel('Unlink Me')
-      .setStyle(ButtonStyle.Danger)
-      .setEmoji('🔓');
+      .setEmoji('🔒');
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      myStatsButton,
-      linkButton,
-      unlinkButton,
+      openRoomButton,
     );
 
-    // 2. Check if the channel already has messages
-    // If there is only 1 message and it belongs to the bot, just edit it to keep the chat clean
-    const existingMessage = messages.find(
+    // 2. Busca mensagens recentes no canal para verificar se já existe o painel
+    const messages = await channel.messages.fetch({ limit: 50 });
+    const botMessages = messages.filter(
       (msg: Message) => msg.author.id === client.user?.id,
     );
 
-    if (messages.size === 1 && existingMessage) {
-      // Chat is clean and the message belongs to the bot: just update the content
+    const existingMessage = botMessages.first();
+
+    if (existingMessage) {
+      // Se já existe uma mensagem do bot, edita-a para não duplicar no chat
       await existingMessage.edit({
         embeds: [embed],
         components: [row],
       });
       console.log(
-        `[SetupPanel] Finished - existing panel updated successfully in channel: ${CHANNEL_BOT_ID}`,
+        `[SetupPanel] Painel existente atualizado com sucesso no canal: ${channelId}`,
       );
-    } else {
-      // If there are multiple messages or clutter in the chat: clear all and send a fresh panel
-      if (messages.size > 0) {
-        console.log(
-          `[SetupPanel] Clearing ${messages.size} old message(s) in channel: ${CHANNEL_BOT_ID}...`,
-        );
-        await channel.bulkDelete(messages, true);
-      }
 
+      // Remove eventuais mensagens excedentes do bot no canal
+      const extraMessages = botMessages.filter(
+        (msg: Message) => msg.id !== existingMessage.id,
+      );
+      for (const [, extra] of extraMessages) {
+        await extra.delete().catch(() => null);
+      }
+    } else {
+      // Se não existe, envia uma nova mensagem com o painel fixo
       await channel.send({
         embeds: [embed],
         components: [row],
       });
       console.log(
-        `[SetupPanel] Finished - chat cleared and fresh panel published successfully in channel: ${CHANNEL_BOT_ID}`,
+        `[SetupPanel] Novo painel fixo criado com sucesso no canal: ${channelId}`,
       );
     }
   } catch (error) {
-    console.error(
-      `[SetupPanel] Finished with error setting up panel on startup:`,
-      error,
-    );
+    console.error('[SetupPanel] Erro ao configurar painel fixo:', error);
   }
 }
