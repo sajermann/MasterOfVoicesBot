@@ -3,7 +3,7 @@ import { VoiceRoomService } from '../../../services/VoiceRoomService';
 import { buildRoomConfigPayload } from '../buttons/openRoom';
 
 /**
- * Trata o envio do modal de personalização do nome da sala.
+ * Handles the voice room name customization modal submission.
  */
 export async function handleRoomNameModal(
   interaction: ModalSubmitInteraction,

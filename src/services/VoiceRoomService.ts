@@ -15,18 +15,18 @@ export interface RoomCreationDraft {
   updatedAt: number;
 }
 
-// Armazena os IDs dos canais de voz temporários ativos gerenciados pelo bot
+// Stores active temporary voice channel IDs managed by the bot
 const activeRooms = new Set<string>();
 
-// Armazena timeouts de abandono (caso ninguém entre na sala recém-criada)
+// Stores abandonment timeouts (in case no one joins the newly created room)
 const abandonmentTimers = new Map<string, NodeJS.Timeout>();
 
-// Armazena os rascunhos de criação de sala por usuário
+// Stores room creation drafts per user
 const userDrafts = new Map<string, RoomCreationDraft>();
 
 export const VoiceRoomService = {
   /**
-   * Obtém ou inicializa o rascunho de configuração de sala para um usuário.
+   * Retrieves or initializes the room configuration draft for a user.
    */
   getDraft(userId: string): RoomCreationDraft {
     const existing = userDrafts.get(userId);
@@ -44,7 +44,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Atualiza o limite de vagas no rascunho do usuário.
+   * Updates capacity limit in user's draft.
    */
   updateDraftLimit(userId: string, limit: number): RoomCreationDraft {
     const draft = VoiceRoomService.getDraft(userId);
@@ -55,7 +55,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Atualiza a lista de membros convidados no rascunho do usuário.
+   * Updates invited members list in user's draft.
    */
   updateDraftMembers(userId: string, memberIds: string[]): RoomCreationDraft {
     const draft = VoiceRoomService.getDraft(userId);
@@ -66,7 +66,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Atualiza o nome personalizado no rascunho do usuário.
+   * Updates custom name in user's draft.
    */
   updateDraftName(userId: string, name?: string): RoomCreationDraft {
     const draft = VoiceRoomService.getDraft(userId);
@@ -77,14 +77,14 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Limpa o rascunho do usuário após confirmação ou cancelamento.
+   * Clears user draft after confirmation or cancellation.
    */
   clearDraft(userId: string): void {
     userDrafts.delete(userId);
   },
 
   /**
-   * Verifica se o canal ou ID fornecido pertence a uma sala temporária.
+   * Checks if the provided channel or ID belongs to a temporary room.
    */
   isTemporaryRoom(channelOrId: VoiceBasedChannel | string): boolean {
     if (typeof channelOrId === 'string') {
@@ -100,7 +100,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Cancela o timer de abandono caso algum usuário entre na sala.
+   * Cancels abandonment timer if a user joins the room.
    */
   cancelAbandonmentTimer(channelId: string): void {
     const timer = abandonmentTimers.get(channelId);
@@ -111,8 +111,8 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Limpa todas as salas temporárias vazias na inicialização do bot
-   * e reassume o rastreamento das que ainda possuírem membros ativos.
+   * Cleans up all empty temporary rooms on bot startup
+   * and resumes tracking for those that still have active members.
    */
   async cleanupAbandonedRooms(client: Client): Promise<void> {
     console.log('[VoiceRoomService] Running startup cleanup of voice rooms...');
@@ -136,7 +136,7 @@ export const VoiceRoomService = {
               );
               await VoiceRoomService.deleteRoom(channel);
             } else {
-              // A sala ainda tem participantes: readiciona no activeRooms
+              // Room still has participants: re-add to activeRooms
               activeRooms.add(channel.id);
               console.log(
                 `[VoiceRoomService] Recovered active temporary room: "${channel.name}" (${channel.id}) with ${channel.members.size} member(s).`,
@@ -155,7 +155,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Cria um canal de voz temporário (público ou privado) com permissões restritas.
+   * Creates a temporary voice channel (public or private) with restricted permissions.
    */
   async createVoiceRoom(
     guild: Guild,
@@ -167,7 +167,7 @@ export const VoiceRoomService = {
     const categoryId = process.env.CATEGORY_VOICE_ID?.trim() || undefined;
     const isPrivate = memberIds.length > 0;
 
-    // Filtra membros autorizados sem duplicar o dono
+    // Filter allowed members without duplicating owner
     const allowedMembers = Array.from(
       new Set(memberIds.filter(id => id !== owner.id)),
     );
@@ -175,10 +175,10 @@ export const VoiceRoomService = {
     const permissionOverwrites = [];
 
     if (isPrivate) {
-      // Sala Privada:
-      // 1. @everyone: nega visualização e conexão
-      // 2. Dono da sala: permite ver, conectar, falar e mover membros
-      // 3. Membros selecionados: permite ver, conectar e falar
+      // Private Room:
+      // 1. @everyone: denies view and connect
+      // 2. Room owner: allows view, connect, speak, and move members
+      // 3. Selected members: allows view, connect, and speak
       permissionOverwrites.push(
         {
           id: guild.roles.everyone.id,
@@ -203,9 +203,9 @@ export const VoiceRoomService = {
         })),
       );
     } else {
-      // Sala Aberta / Pública:
-      // 1. @everyone: permite ver, conectar e falar
-      // 2. Dono da sala: permite ver, conectar, falar e mover membros
+      // Open / Public Room:
+      // 1. @everyone: allows view, connect, and speak
+      // 2. Room owner: allows view, connect, speak, and move members
       permissionOverwrites.push(
         {
           id: guild.roles.everyone.id,
@@ -258,7 +258,7 @@ export const VoiceRoomService = {
       `[VoiceRoomService] Created temporary voice room ${voiceChannel.name} (${voiceChannel.id}) for owner ${owner.tag}`,
     );
 
-    // Move o dono automaticamente se ele já estiver em algum canal de voz
+    // Automatically move owner if they are already in a voice channel
     let movedOwner = false;
     try {
       const ownerMember = await guild.members.fetch(owner.id);
@@ -276,7 +276,7 @@ export const VoiceRoomService = {
       );
     }
 
-    // Se o dono não foi movido imediatamente, define um timeout de abandono (2 minutos)
+    // If owner was not moved immediately, set abandonment timeout (2 minutes)
     if (!movedOwner) {
       const timer = setTimeout(async () => {
         try {
@@ -304,7 +304,7 @@ export const VoiceRoomService = {
   },
 
   /**
-   * Exclui um canal de voz temporário e remove do rastreamento.
+   * Deletes a temporary voice channel and removes it from tracking.
    */
   async deleteRoom(
     channel: VoiceBasedChannel | AnyThreadChannel | null,

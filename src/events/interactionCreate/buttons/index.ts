@@ -4,7 +4,7 @@ import { handleOpenRoom } from './openRoom';
 import { handleSetNameButton } from './setName';
 
 /**
- * Despacha as interações de botão para seus respectivos manipuladores.
+ * Dispatches button interactions to their respective handlers.
  */
 export async function handleButtonInteraction(
   interaction: ButtonInteraction,

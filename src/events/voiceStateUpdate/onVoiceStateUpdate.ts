@@ -2,14 +2,14 @@ import type { VoiceState } from 'discord.js';
 import { VoiceRoomService } from '../../services/VoiceRoomService';
 
 /**
- * Monitora atualizações de estado de voz para gerenciar as salas temporárias.
- * Cancela timers de abandono quando membros entram e deleta a sala quando todos saem.
+ * Monitors voice state updates to manage temporary rooms.
+ * Cancels abandonment timers when members join and deletes the room when all leave.
  */
 export async function onVoiceStateUpdate(
   oldState: VoiceState,
   newState: VoiceState,
 ): Promise<void> {
-  // 1. Se alguém entrou em uma sala temporária, cancela o timer de abandono
+  // 1. If someone joined a temporary room, cancel the abandonment timer
   if (
     newState.channelId &&
     VoiceRoomService.isTemporaryRoom(newState.channelId)
@@ -17,12 +17,12 @@ export async function onVoiceStateUpdate(
     VoiceRoomService.cancelAbandonmentTimer(newState.channelId);
   }
 
-  // 2. Se alguém saiu ou mudou de canal de voz
+  // 2. If someone left or switched voice channels
   if (oldState.channelId && oldState.channelId !== newState.channelId) {
     const leftChannel = oldState.channel;
 
     if (leftChannel && VoiceRoomService.isTemporaryRoom(leftChannel)) {
-      // Verifica se a sala ficou completamente vazia
+      // Check if the room became completely empty
       if (leftChannel.members.size === 0) {
         console.log(
           `[VoiceStateUpdate] Temporary room "${leftChannel.name}" (${leftChannel.id}) is now empty. Deleting...`,

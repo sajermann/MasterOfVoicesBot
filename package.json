@@ -1,15 +1,15 @@
 {
-  "name": "master-of-voices-discord-bot",
+  "name": "master-of-voices-bot",
   "version": "1.0.3",
   "description": "Bot do Discord responsável por gerenciar os canais de audio.",
   "author": "Bruno Sajermann",
   "main": "./src/index.js",
   "scripts": {
-    "test": "jest --coverage",
     "start": "cross-env NODE_ENV=development tsx watch src/index.ts",
     "preview": "node build/index.js",
     "build": "webpack --progress --stats detailed",
-    "deploy:commands": "tsx --env-file=.env.development src/commands/deploy.ts"
+    "deploy:commands": "tsx --env-file=.env.development src/commands/deploy.ts",
+    "lint": "biome check ."
   },
   "keywords": [],
   "license": "ISC",

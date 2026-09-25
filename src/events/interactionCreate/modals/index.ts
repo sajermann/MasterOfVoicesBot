@@ -2,7 +2,7 @@ import type { ModalSubmitInteraction } from 'discord.js';
 import { handleRoomNameModal } from './roomNameModal';
 
 /**
- * Despacha as interações de submissão de modal.
+ * Dispatches modal submission interactions.
  */
 export async function handleModalInteraction(
   interaction: ModalSubmitInteraction,

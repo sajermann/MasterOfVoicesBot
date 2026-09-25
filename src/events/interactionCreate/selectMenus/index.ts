@@ -3,7 +3,7 @@ import { handleRoomLimitSelect } from './roomLimitSelect';
 import { handleRoomMembersSelect } from './roomMembersSelect';
 
 /**
- * Despacha as interações de menus de seleção (String e User Select Menus).
+ * Dispatches select menu interactions (String and User Select Menus).
  */
 export async function handleSelectMenuInteraction(
   interaction: AnySelectMenuInteraction,
