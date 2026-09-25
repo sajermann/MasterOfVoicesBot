@@ -18,7 +18,7 @@ import {
 } from '../../../services/VoiceRoomService';
 
 /**
- * Monta o payload (Embed + Componentes) para configuração da sala de voz.
+ * Builds the payload (Embed + Components) for voice room configuration.
  */
 export function buildRoomConfigPayload(
   draft: RoomCreationDraft,
@@ -49,7 +49,7 @@ export function buildRoomConfigPayload(
       text: 'Selecione as opções abaixo e clique em Confirmar Criação',
     });
 
-  // 1. Menu de seleção de vagas (StringSelectMenu)
+  // 1. Capacity selection menu (StringSelectMenu)
   const limitSelect = new StringSelectMenuBuilder()
     .setCustomId('select_room_limit')
     .setPlaceholder(
@@ -84,21 +84,21 @@ export function buildRoomConfigPayload(
         .setDefault(draft.limit === 0),
     );
 
-  // 2. Menu de seleção de membros do servidor (UserSelectMenu nativo)
+  // 2. Server member selection menu (native UserSelectMenu)
   const membersSelect = new UserSelectMenuBuilder()
     .setCustomId('select_room_members')
     .setPlaceholder('Vazio = Aberta | Selecione para tornar privada')
     .setMinValues(0)
     .setMaxValues(10);
 
-  // 3. Botão para definir nome personalizado
+  // 3. Button to set custom name
   const setNameButton = new ButtonBuilder()
     .setCustomId('btn_set_room_name')
     .setLabel(draft.customName ? 'Alterar Nome' : 'Definir Nome')
     .setStyle(ButtonStyle.Secondary)
     .setEmoji('✏️');
 
-  // 4. Botão de confirmação de criação
+  // 4. Creation confirmation button
   const confirmButton = new ButtonBuilder()
     .setCustomId('btn_confirm_create_room')
     .setLabel('Confirmar Criação')
@@ -121,7 +121,7 @@ export function buildRoomConfigPayload(
 }
 
 /**
- * Trata o clique no botão do painel fixo para abrir o menu de configuração efêmero.
+ * Handles the click on the persistent panel button to open the ephemeral configuration menu.
  */
 export async function handleOpenRoom(
   interaction: ButtonInteraction,

@@ -3,7 +3,7 @@ import { VoiceRoomService } from '../../../services/VoiceRoomService';
 import { buildRoomConfigPayload } from '../buttons/openRoom';
 
 /**
- * Trata a seleção do limite de vagas da sala de voz via StringSelectMenu.
+ * Handles voice room capacity limit selection via StringSelectMenu.
  */
 export async function handleRoomLimitSelect(
   interaction: StringSelectMenuInteraction,

@@ -5,8 +5,8 @@ import { handleModalInteraction } from './modals';
 import { handleSelectMenuInteraction } from './selectMenus';
 
 /**
- * Roteador principal de interações do Discord.
- * Despacha eventos para comandos slash, botões, menus de seleção e modais.
+ * Main Discord interaction router.
+ * Dispatches events to slash commands, buttons, select menus, and modals.
  */
 export async function handleInteraction(
   interaction: Interaction,
@@ -18,19 +18,19 @@ export async function handleInteraction(
       return;
     }
 
-    // 2. Botões
+    // 2. Buttons
     if (interaction.isButton()) {
       await handleButtonInteraction(interaction);
       return;
     }
 
-    // 3. Menus de seleção (String e User Select Menus)
+    // 3. Select menus (String and User Select Menus)
     if (interaction.isAnySelectMenu()) {
       await handleSelectMenuInteraction(interaction);
       return;
     }
 
-    // 4. Modais
+    // 4. Modals
     if (interaction.isModalSubmit()) {
       await handleModalInteraction(interaction);
       return;

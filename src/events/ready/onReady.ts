@@ -7,10 +7,10 @@ export async function onReady(client: Client): Promise<void> {
     `[Bot] Ready event fired. Logged in as ${client.user?.tag} (${client.user?.id})`,
   );
   try {
-    // 1. Limpa salas temporárias que possam ter ficado órfãs durante o restart
+    // 1. Clean up temporary rooms that may have been orphaned during restart
     await VoiceRoomService.cleanupAbandonedRooms(client);
 
-    // 2. Garante a existência e atualização do painel fixo de criação
+    // 2. Ensure existence and update of the persistent creation panel
     await setupPanel(client);
 
     console.log('[Bot] Startup completed successfully');

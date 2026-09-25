@@ -30,7 +30,7 @@ export async function setupPanel(client: Client): Promise<void> {
       return;
     }
 
-    // 1. Constrói o Embed e o Botão do Painel
+    // 1. Build the Embed and the Panel Button
     const embed = new EmbedBuilder()
       .setTitle('🎙️ Salas de Voz Privadas')
       .setDescription(
@@ -57,7 +57,7 @@ export async function setupPanel(client: Client): Promise<void> {
       openRoomButton,
     );
 
-    // 2. Busca mensagens recentes no canal para verificar se já existe o painel
+    // 2. Fetch recent messages in the channel to check if the panel already exists
     const messages = await channel.messages.fetch({ limit: 50 });
     const botMessages = messages.filter(
       (msg: Message) => msg.author.id === client.user?.id,
@@ -66,7 +66,7 @@ export async function setupPanel(client: Client): Promise<void> {
     const existingMessage = botMessages.first();
 
     if (existingMessage) {
-      // Se já existe uma mensagem do bot, edita-a para não duplicar no chat
+      // If a message from the bot already exists, edit it to avoid duplicates in chat
       await existingMessage.edit({
         embeds: [embed],
         components: [row],
@@ -75,7 +75,7 @@ export async function setupPanel(client: Client): Promise<void> {
         `[SetupPanel] Painel existente atualizado com sucesso no canal: ${channelId}`,
       );
 
-      // Remove eventuais mensagens excedentes do bot no canal
+      // Remove any excess messages from the bot in the channel
       const extraMessages = botMessages.filter(
         (msg: Message) => msg.id !== existingMessage.id,
       );
@@ -83,7 +83,7 @@ export async function setupPanel(client: Client): Promise<void> {
         await extra.delete().catch(() => null);
       }
     } else {
-      // Se não existe, envia uma nova mensagem com o painel fixo
+      // If it doesn't exist, send a new message with the persistent panel
       await channel.send({
         embeds: [embed],
         components: [row],

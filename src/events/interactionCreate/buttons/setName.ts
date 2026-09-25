@@ -8,7 +8,7 @@ import {
 import { VoiceRoomService } from '../../../services/VoiceRoomService';
 
 /**
- * Abre o modal para o usuário definir ou alterar o nome da sala de voz.
+ * Opens the modal for the user to set or change the voice room name.
  */
 export async function handleSetNameButton(
   interaction: ButtonInteraction,

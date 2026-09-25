@@ -1,5 +1,5 @@
 services:
-  master-of-voices-discord-bot:
+  master-of-voices-bot:
     build:
       context: .
       target: production

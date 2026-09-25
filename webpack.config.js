@@ -5,15 +5,15 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  // mode: 'development', // Desativa minificação
-  // devtool: 'hidden-source-map', // Gera source maps sem incluir no bundle
+  // mode: 'development', // Disables minification
+  // devtool: 'hidden-source-map', // Generates source maps without including in bundle
   optimization: {
     // minimize: false,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          keep_classnames: true, // Preserva nomes de classes
-          keep_fnames: true, // Preserva nomes de funções
+          keep_classnames: true, // Preserves class names
+          keep_fnames: true, // Preserves function names
           compress: {
             defaults: true,
             unused: true,

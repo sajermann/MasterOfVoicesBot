@@ -2,7 +2,7 @@ import { type ButtonInteraction, EmbedBuilder, MessageFlags } from 'discord.js';
 import { VoiceRoomService } from '../../../services/VoiceRoomService';
 
 /**
- * Trata o clique no botão Confirmar Criação para criar a sala privada com as permissões configuradas.
+ * Handles the click on Confirm Creation button to create the private room with configured permissions.
  */
 export async function handleConfirmCreateRoom(
   interaction: ButtonInteraction,
@@ -19,7 +19,7 @@ export async function handleConfirmCreateRoom(
   const userId = interaction.user.id;
   const draft = VoiceRoomService.getDraft(userId);
 
-  // Desativa interação enquanto cria o canal
+  // Disable interaction while creating the channel
   await interaction.deferUpdate();
 
   try {
@@ -31,7 +31,7 @@ export async function handleConfirmCreateRoom(
       draft.customName,
     );
 
-    // Limpa o rascunho após a criação bem-sucedida
+    // Clear the draft after successful creation
     VoiceRoomService.clearDraft(userId);
 
     const isPrivate = draft.memberIds.length > 0;

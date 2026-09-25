@@ -1,7 +1,7 @@
 import util from 'node:util';
 import { Axiom } from '@axiomhq/js';
 
-// Mantém as referências originais para continuar exibindo no terminal
+// Keep original references to continue logging to the terminal
 export const originalConsole = {
   log: console.log.bind(console),
   info: console.info.bind(console),
@@ -17,7 +17,7 @@ let isInitialized = false;
 let isFlushing = false;
 
 /**
- * Inicializa a integração com o Axiom e configura o hook dos métodos de console.
+ * Initializes Axiom integration and configures the hook for console methods.
  */
 export function initAxiom(): Axiom | null {
   if (isInitialized) return axiomClient;
@@ -37,7 +37,7 @@ export function initAxiom(): Axiom | null {
     axiomClient = new Axiom({
       token: apiKey,
       onError: err => {
-        // Usa o console original para evitar loop infinito
+        // Use the original console to prevent infinite loops
         originalConsole.error('[Axiom Error]:', err?.message || err);
       },
     });
@@ -53,7 +53,7 @@ export function initAxiom(): Axiom | null {
 }
 
 /**
- * Intercepta as chamadas do console para enviar ao Axiom e manter no terminal.
+ * Intercepts console calls to send to Axiom and maintain terminal output.
  */
 function hookConsole(datasetName: string) {
   const levels: LogLevel[] = ['log', 'info', 'warn', 'error', 'debug'];
@@ -62,17 +62,17 @@ function hookConsole(datasetName: string) {
     const originalMethod = originalConsole[level];
 
     console[level] = (...args: unknown[]) => {
-      // 1. Mantém a impressão normal no terminal
+      // 1. Maintain standard output to the terminal
       originalMethod(...args);
 
-      // 2. Se o cliente Axiom não estiver disponível, encerra aqui
+      // 2. If the Axiom client is not available, exit here
       if (!axiomClient) return;
 
       try {
-        // util.format lida com strings formatadas (%s, %d), objetos e referências circulares com segurança
+        // util.format handles formatted strings (%s, %d), objects, and circular references safely
         const formattedMessage = util.format(...args);
 
-        // Detecta se algum argumento é um Error para capturar stack trace detalhado
+        // Detect if any argument is an Error to capture detailed stack trace
         const errorArg = args.find((arg): arg is Error => arg instanceof Error);
 
         axiomClient.ingest(datasetName, [
@@ -99,7 +99,7 @@ function hookConsole(datasetName: string) {
 }
 
 /**
- * Garante que logs enfileirados no batch sejam enviados antes do encerramento do processo.
+ * Ensures queued logs in the batch are flushed before process exit.
  */
 export async function flushAxiom(): Promise<void> {
   if (axiomClient && !isFlushing) {
@@ -128,5 +128,5 @@ function setupProcessHandlers() {
   process.once('SIGTERM', handleTermination);
 }
 
-// Auto-inicializa na importação
+// Auto-initialize on import
 initAxiom();

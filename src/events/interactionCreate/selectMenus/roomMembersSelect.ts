@@ -3,7 +3,7 @@ import { VoiceRoomService } from '../../../services/VoiceRoomService';
 import { buildRoomConfigPayload } from '../buttons/openRoom';
 
 /**
- * Trata a seleção dos membros que terão permissão na sala via UserSelectMenu.
+ * Handles the selection of members who will have access to the room via UserSelectMenu.
  */
 export async function handleRoomMembersSelect(
   interaction: UserSelectMenuInteraction,
