@@ -1,5 +1,6 @@
 import { type ButtonInteraction, EmbedBuilder, MessageFlags } from 'discord.js';
 import { VoiceRoomService } from '../../../services/VoiceRoomService';
+import { scheduleAutoDelete, withAutoDeleteNotice } from '../../../utils';
 
 /**
  * Handles the click on Confirm Creation button to create the private room with configured permissions.
@@ -38,18 +39,19 @@ export async function handleConfirmCreateRoom(
     const successEmbed = new EmbedBuilder()
       .setTitle('🎉 Sala Criada com Sucesso!')
       .setDescription(
-        `Sua sala de voz está pronta: <#${channel.id}>\n\n` +
-          `• **Nome:** \`${channel.name}\`\n` +
-          `• **Vagas:** \`${draft.limit === 0 ? 'Ilimitado' : `${draft.limit} pessoas`}\`\n` +
-          `• **Acesso:** ${
-            isPrivate
-              ? `🔒 Privada (${draft.memberIds.map(id => `<@${id}>`).join(', ')})`
-              : '🔊 Aberta para todos (Pública)'
-          }\n\n` +
-          (movedOwner
-            ? '🔊 *Você foi movido automaticamente para o canal!*'
-            : '👉 *Conecte-se à sala para utilizá-la.*') +
-          '\n\n*⏳ Esta sala será apagada automaticamente assim que todos saírem.*',
+        withAutoDeleteNotice(
+          `Sua sala de voz está pronta: <#${channel.id}>\n\n` +
+            `• **Nome:** \`${channel.name}\`\n` +
+            `• **Vagas:** \`${draft.limit === 0 ? 'Ilimitado' : `${draft.limit} pessoas`}\`\n` +
+            `• **Acesso:** ${
+              isPrivate
+                ? `🔒 Privada (${draft.memberIds.map(id => `<@${id}>`).join(', ')})`
+                : '🔊 Aberta para todos (Pública)'
+            }\n\n` +
+            (movedOwner
+              ? '🔊 *Você foi movido automaticamente para o canal!*'
+              : '👉 *Conecte-se à sala para utilizá-la.*'),
+        ),
       )
       .setColor(0x57f287);
 
@@ -57,6 +59,7 @@ export async function handleConfirmCreateRoom(
       embeds: [successEmbed],
       components: [],
     });
+    scheduleAutoDelete(interaction);
   } catch (error) {
     console.error(
       `[ConfirmCreateRoom] Error creating voice room for ${interaction.user.tag}:`,
@@ -66,7 +69,9 @@ export async function handleConfirmCreateRoom(
     const errorEmbed = new EmbedBuilder()
       .setTitle('❌ Erro ao Criar Sala')
       .setDescription(
-        'Ocorreu um erro ao tentar criar a sala de voz. Verifique se o bot possui a permissão `Gerenciar Canais` e tente novamente.',
+        withAutoDeleteNotice(
+          'Ocorreu um erro ao tentar criar a sala de voz. Verifique se o bot possui a permissão `Gerenciar Canais` e tente novamente.',
+        ),
       )
       .setColor(0xed4245);
 
@@ -74,5 +79,6 @@ export async function handleConfirmCreateRoom(
       embeds: [errorEmbed],
       components: [],
     });
+    scheduleAutoDelete(interaction);
   }
 }
