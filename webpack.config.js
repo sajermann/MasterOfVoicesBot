@@ -64,7 +64,10 @@ module.exports = {
     },
     fullySpecified: false,
     fallback: {
+      stream: require.resolve('stream-browserify'),
       util: require.resolve('util/'),
+      buffer: require.resolve('buffer/'),
+      zlib: require.resolve('browserify-zlib'),
     },
   },
   plugins: [
