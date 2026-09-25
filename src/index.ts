@@ -6,12 +6,7 @@ import { onReady } from './events/ready/onReady';
 import { onVoiceStateUpdate } from './events/voiceStateUpdate/onVoiceStateUpdate';
 
 const client = new DiscordJs.Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 client.once(Events.ClientReady, async () => {
