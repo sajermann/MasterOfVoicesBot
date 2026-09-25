@@ -81,7 +81,7 @@ function hookConsole(datasetName: string) {
             level,
             message: formattedMessage,
             environment: process.env.NODE_ENV || 'development',
-            service: 'sajermann-fortnite-bot',
+            service: 'master-of-voices-discord-bot',
             ...(errorArg && {
               error: {
                 name: errorArg.name,
