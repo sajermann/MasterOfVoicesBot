@@ -39,10 +39,10 @@ export async function setupPanel(client: Client): Promise<void> {
           '1️⃣ Clique no botão **Criar Sala Privada** abaixo.\n' +
           '2️⃣ Escolha o limite máximo de pessoas que poderão entrar.\n' +
           '3️⃣ Selecione no menu nativo quais amigos terão permissão de acesso.\n' +
-          '4️⃣ Ao confirmar, sua sala é criada e você é movido automaticamente.\n\n' +
+          '4️⃣ Ao confirmar, sua sala é criada.\n\n' +
           '🧹 *Quando o último participante sair da sala, ela será excluída automaticamente.*',
       )
-      .setColor(0x5865f2)
+      .setColor(0x05e52f)
       .setFooter({
         text: 'Master of Voices • Salas Temporárias',
       });

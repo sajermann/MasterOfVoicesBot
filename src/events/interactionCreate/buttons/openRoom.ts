@@ -44,7 +44,7 @@ export function buildRoomConfigPayload(
           ? '*Apenas você e os membros selecionados poderão ver e entrar na sala.*'
           : '*Deixe o seletor vazio para criar uma sala aberta ou selecione membros para torná-la privada.*'),
     )
-    .setColor(0x5865f2)
+    .setColor(0x05e52f)
     .setFooter({
       text: 'Selecione as opções abaixo e clique em Confirmar Criação',
     });

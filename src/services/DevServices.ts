@@ -6,6 +6,7 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 
 // biome-ignore lint/complexity/noStaticOnlyClass: utility service with static methods
 export class DevServices {
+  private static restartedAt = formatDateAndHour(new Date());
   private static async getPackageData(): Promise<{
     version: string;
     lastUpdate: string;
@@ -28,12 +29,12 @@ export class DevServices {
     const config = {
       version: packageData.version,
       updatedAt: formatDateAndHour(new Date(packageData.lastUpdate)),
+      restartedAt: DevServices.restartedAt,
       ambient: IS_DEVELOPMENT ? 'Development' : 'Production',
     };
 
     return {
       ...config,
-      message: `Version: ${config.version} | Last Update: ${config.updatedAt} | Ambient: ${config.ambient}`,
     };
   }
 }
